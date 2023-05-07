@@ -1,93 +1,120 @@
+# Copyright (c) 2013, erpcloud.systems and contributors
+# For license information, please see license.txt
+
+from __future__ import unicode_literals
+import frappe
 from frappe import _
 
+
 def execute(filters=None):
-    columns = [
-        _("Account") + ":Link/Account:200",
-        _("Total Debit") + ":Currency:120",
-        _("Total Credit") + ":Currency:120"
+    columns, data = [], []
+    columns = get_columns()
+    data = get_data(filters, columns)
+    return columns, data
+
+
+def get_columns():
+    return [
+        {
+            "label": _("Company"),
+            "fieldname": "company",
+            "fieldtype": "Link",
+            "options": "Company",
+            "width": 200
+        },
+
+        {
+            "label": _("Date"),
+            "fieldname": "posting_date",
+            "fieldtype": "Date",
+            "width": 100
+        },
+        {
+            "label": _("Cluster"),
+            "fieldname": "cost_center",
+            "fieldtype": "Link",
+            "options": "Cost Center",
+            "width": 200
+        },
+        {
+            "label": _("Total Income"),
+            "fieldname": "income",
+            "fieldtype": "Currency",
+            "width": 150
+        },
+        {
+            "label": _("Total Expense"),
+            "fieldname": "expence",
+            "fieldtype": "Currency",
+            "width": 150
+        },
+        {
+            "label": _("Profit"),
+            "fieldname": "profit",
+            "fieldtype": "Float",
+            "width": 150
+        }
+
     ]
-    data = []
 
-    # Filter for GL Entries
-    gl_filters = {
-        "doctype": "GL Entry",
-        "posting_date": ["between", [filters.get("from_date"), filters.get("to_date")]],
-        "account_type": ["in", ["Income", "Expense"]]
-    }
 
-    # Filter for Income Accounts
-    income_account_filters = {
-        "account_type": "Income"
-    }
+def get_data(filters, columns):
+    item_price_qty_data = []
+    item_price_qty_data = get_item_price_qty_data(filters)
+    return item_price_qty_data
 
-    # Filter for Expense Accounts
-    expense_account_filters = {
-        "account_type": "Expense"
-    }
 
-    # Get Income Accounts
-    income_accounts = frappe.get_all("Account",
-        filters=income_account_filters,
-        pluck="name"
-    )
-    for account in income_accounts:
-        account_data = frappe.db.sql("""
-            SELECT SUM(debit) AS debit, SUM(credit) AS credit
-            FROM `tabGL Entry`
-            WHERE account=%s AND {conditions}
-        """.format(conditions=frappe.db.build_conditions(gl_filters)),
-            (account,)
-        )[0]
-        if account_data.debit or account_data.credit:
-            data.append([account, account_data.debit, account_data.credit])
+def get_item_price_qty_data(filters):
+    conditions = ""
+    if filters.get("from_date"):
+        conditions += " and `tabGL Entry`.posting_date>=%(from_date)s"
+    if filters.get("to_date"):
+        conditions += " and `tabGL Entry`.posting_date<=%(to_date)s"
+    if filters.get("company"):
+        conditions += " and `tabGL Entry`.company =%(company)s"
+    if filters.get("cost_center"):
+        conditions += " and `tabGL Entry`.cluster = %(cluster)s"
+    item_results = frappe.db.sql("""
+				select
+						`tabGL Entry`.company as company,
+						`tabGL Entry`.posting_date as posting_date,
+						`tabGL Entry`.cluster as cluster,
+						`tabGL Entry`.debit as debit,
+						`tabGL Entry`.credit as credit
 
-    # Get Total Income
-    total_income = {
-        "Account": _("Total Income"),
-        "Total Debit": sum(row[1] for row in data),
-        "Total Credit": sum(row[2] for row in data)
-    }
-    if total_income["Total Debit"] or total_income["Total Credit"]:
-        data.append([
-            total_income["Account"], total_income["Total Debit"], total_income["Total Credit"]
-        ])
+				from
+				`tabGL Entry`
 
-    # Get Expense Accounts
-    expense_accounts = frappe.get_all("Account",
-        filters=expense_account_filters,
-        pluck="name"
-    )
-    for account in expense_accounts:
-        account_data = frappe.db.sql("""
-            SELECT SUM(debit) AS debit, SUM(credit) AS credit
-            FROM `tabGL Entry`
-            WHERE account=%s AND {conditions}
-        """.format(conditions=frappe.db.build_conditions(gl_filters)),
-            (account,)
-        )[0]
-        if account_data.debit or account_data.credit:
-            data.append([account, account_data.debit, account_data.credit])
+				where
+				`tabGL Entry`.docstatus = 1
+				and `tabGL Entry`.is_cancelled = 0
+				{conditions}
+				
+				order by
+				`tabGL Entry`.posting_date asc
+                group by `tabGL Entry`.cluster
 
-    # Get Total Expenses
-    total_expenses = {
-        "Account": _("Total Expenses"),
-        "Total Debit": sum(row[1] for row in data) - total_income["Total Debit"],
-        "Total Credit": sum(row[2] for row in data) - total_income["Total Credit"]
-    }
-    if total_expenses["Total Debit"] or total_expenses["Total Credit"]:
-        data.append([
-            total_expenses["Account"], total_expenses["Total Debit"], total_expenses["Total Credit"]
-        ])
 
-    # Calculate Net Income/Loss
-    net_income_loss = {
-        "Account": _("Net Income/Loss"),
-        "Total Debit": total_income["Total Debit"] - total_expenses["Total Debit"],
-        "Total Credit": total_income["Total Credit"] - total_expenses["Total Credit"]
-    }
-    if net_income_loss["Total Debit"] or net_income_loss["Total Credit"]:
-        data.append([
-            net_income_loss["Account"], net_income_loss["Total Debit"], net_income_loss["Total Credit"]
-        ])
 
-    return
+				""".format(conditions=conditions), filters, as_dict=1)
+
+    # price_list_names = list(set([item.price_list_name for item in item_results]))
+
+    # buying_price_map = get_price_map(price_list_names, buying=1)
+    # selling_price_map = get_price_map(price_list_names, selling=1)
+
+    result = []
+    if item_results:
+        for item_dict in item_results:
+            data = {
+                'company': item_dict.company,
+                'posting_date': _(item_dict.posting_date),
+                'cluster': _(item_dict.cluster),
+                'debit': item_dict.debit,
+                'credit': item_dict.credit,
+                'balance': item_dict.debit - item_dict.credit,
+
+            }
+            result.append(data)
+
+    return result
