@@ -1,0 +1,76 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-05-07 03:33:26.871282",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "basic",
+  "insurance",
+  "commission",
+  "column_break_b66wx",
+  "over_time",
+  "expenses"
+ ],
+ "fields": [
+  {
+   "fieldname": "basic",
+   "fieldtype": "Link",
+   "label": "Basic",
+   "options": "Salary Component"
+  },
+  {
+   "fieldname": "insurance",
+   "fieldtype": "Link",
+   "label": "Insurance",
+   "options": "Salary Component"
+  },
+  {
+   "fieldname": "commission",
+   "fieldtype": "Link",
+   "label": "Commission",
+   "options": "Salary Component"
+  },
+  {
+   "fieldname": "over_time",
+   "fieldtype": "Link",
+   "label": "Over Time",
+   "options": "Salary Component"
+  },
+  {
+   "fieldname": "expenses",
+   "fieldtype": "Link",
+   "label": "Expenses",
+   "options": "Salary Component"
+  },
+  {
+   "fieldname": "column_break_b66wx",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2023-05-07 03:33:44.687160",
+ "modified_by": "Administrator",
+ "module": "Techno",
+ "name": "Salary Definition Setting",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,91 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-05-07 03:09:57.039275",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "employee_name",
+  "basic",
+  "insurance",
+  "commission",
+  "over_time",
+  "expenses",
+  "salary_currency"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fieldname": "basic",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Basic",
+   "reqd": 1
+  },
+  {
+   "fieldname": "insurance",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Insurance",
+   "reqd": 1
+  },
+  {
+   "fieldname": "commission",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Commission",
+   "reqd": 1
+  },
+  {
+   "fieldname": "over_time",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Over Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "expenses",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Expenses",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "employee.salary_currency",
+   "fieldname": "salary_currency",
+   "fieldtype": "Link",
+   "label": "Salary Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Employee Name",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-05-07 03:57:44.685052",
+ "modified_by": "Administrator",
+ "module": "Techno",
+ "name": "Salary Definition Employee",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

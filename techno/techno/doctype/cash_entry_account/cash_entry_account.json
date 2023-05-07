@@ -1,0 +1,159 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2023-05-06 21:21:13.136750",
+ "default_view": "List",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "cash_entry_type",
+  "employee",
+  "account",
+  "col_break1",
+  "party",
+  "accounting_dimensions_section",
+  "cost_center",
+  "dimension_col_break",
+  "project",
+  "column_break_13",
+  "branch",
+  "sec_break1",
+  "amount",
+  "reference",
+  "user_remark",
+  "party_type"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "label": "Account",
+   "oldfieldname": "account",
+   "oldfieldtype": "Link",
+   "options": "Account",
+   "print_width": "250px",
+   "read_only": 1,
+   "width": "250px"
+  },
+  {
+   "fieldname": "col_break1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 2,
+   "fieldname": "party",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Party",
+   "options": "Employee"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "accounting_dimensions_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting Dimensions"
+  },
+  {
+   "columns": 1,
+   "description": "If Income or Expense",
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Cost Center",
+   "oldfieldname": "cost_center",
+   "oldfieldtype": "Link",
+   "options": "Cost Center",
+   "print_hide": 1,
+   "print_width": "180px",
+   "width": "180px"
+  },
+  {
+   "fieldname": "dimension_col_break",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "label": "Project",
+   "options": "Project"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Branch"
+  },
+  {
+   "fieldname": "sec_break1",
+   "fieldtype": "Section Break",
+   "label": "Amount"
+  },
+  {
+   "columns": 2,
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "options": "Company:company:default_currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reference",
+   "fieldtype": "Section Break",
+   "label": "Remarks"
+  },
+  {
+   "columns": 2,
+   "fieldname": "user_remark",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "User Remark",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "cash_entry_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Expense Cateogry",
+   "options": "Cash Entry Type",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fetch_from": "cash_entry_type.employee",
+   "fieldname": "employee",
+   "fieldtype": "Check",
+   "label": "Employee",
+   "read_only": 1
+  },
+  {
+   "fieldname": "party_type",
+   "fieldtype": "Data",
+   "label": "Party Type",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2023-05-07 00:56:59.287148",
+ "modified_by": "Administrator",
+ "module": "Techno",
+ "name": "Cash Entry Account",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
