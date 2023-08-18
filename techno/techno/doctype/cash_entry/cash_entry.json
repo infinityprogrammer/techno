@@ -40,12 +40,10 @@
    "default": "Pay",
    "fieldname": "payment_type",
    "fieldtype": "Select",
-   "hidden": 1,
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Payment Type",
-   "options": "Receive\nPay",
-   "read_only": 1
+   "options": "Receive\nPay"
   },
   {
    "fieldname": "amount",
@@ -154,7 +152,7 @@
    "link_fieldname": "cash_entry"
   }
  ],
- "modified": "2023-05-07 02:06:28.987035",
+ "modified": "2023-08-10 18:20:50.856181",
  "modified_by": "Administrator",
  "module": "Techno",
  "name": "Cash Entry",

@@ -25,8 +25,9 @@ class CashEntry(Document):
 
 	@frappe.whitelist()
 	def before_submit(self):
-		if self.total_amount != self.amount:
-			frappe.throw(" Amount Must Be Equal To Total Amount Of Accounts Table ... Difference is " + str(self.amount - self.total_amount))
+		pass
+		# if self.total_amount != self.amount:
+		# 	frappe.throw(" Amount Must Be Equal To Total Amount Of Accounts Table ... Difference is " + str(self.amount - self.total_amount))
 
 	@frappe.whitelist()
 	def on_submit(self):
