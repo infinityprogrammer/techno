@@ -29,7 +29,7 @@ def get_all_customer(company):
 def get_data(filters):
 	data_inv = []
 	customer_list = get_all_customer(filters.get("company"))
-
+	all_customer_outstanding_sum = 0
 	for customer in customer_list:
 
 		invoices = frappe.db.sql(
@@ -60,6 +60,7 @@ def get_data(filters):
 		outstanding_sum = 0
 		last_customer = None
 		value_outstanding_sum = 0
+		per_customer_outstanding_sum = 0
 
 		for inv in invoices:
 			context = {}
@@ -71,22 +72,25 @@ def get_data(filters):
 			context['currency'] = inv.currency
 			context['due_date'] = inv.due_date
 			context['due_days'] = inv.due_days
-			context['customer_balance'] = inv.outstanding_amount
-			context['total_balance'] = inv.outstanding_amount
-			context['value_outstanding'] = inv.due_days * inv.outstanding_amount
+			context['outstanding_amount'] = inv.outstanding_amount
 
 			due_days_sum += inv.due_days
 			outstanding_sum += inv.outstanding_amount
-			value_outstanding_sum += inv.due_days * inv.outstanding_amount
+			
 			last_customer = inv.customer
-
+			per_customer_outstanding_sum += inv.outstanding_amount
+			all_customer_outstanding_sum += inv.outstanding_amount
+			context['customer_balance'] = per_customer_outstanding_sum
+			context['total_balance'] = all_customer_outstanding_sum
+			context['value_outstanding'] = inv.due_days * per_customer_outstanding_sum
+			value_outstanding_sum += inv.due_days * per_customer_outstanding_sum
 			data_inv.append(context)
 		
 		cons_context = {}
 		cons_context['customer_code'] = f"<b>{last_customer}</b>"
 		cons_context['customer_name'] = last_customer
 		cons_context['due_days'] = due_days_sum
-		cons_context['customer_balance'] = outstanding_sum
+		cons_context['customer_balance'] = per_customer_outstanding_sum
 		cons_context['value_outstanding'] = value_outstanding_sum
 		cons_context['avg_value_outstanding'] = value_outstanding_sum / due_days_sum if due_days_sum else 1
 		
@@ -126,6 +130,12 @@ def get_columns(filters):
 		{
 			"label": _("Grand Total"),
 			"fieldname": "grand_total",
+			"fieldtype": "Currency",
+			"width": 150,
+		},
+		{
+			"label": _("Invoice Outstanding"),
+			"fieldname": "outstanding_amount",
 			"fieldtype": "Currency",
 			"width": 150,
 		},
