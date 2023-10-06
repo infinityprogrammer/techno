@@ -19,7 +19,7 @@ def execute(filters=None):
 def get_all_customer(company):
 
 	customers = frappe.db.sql(
-        """SELECT distinct customer FROM `tabSales Invoice` 
+        """SELECT distinct customer_code FROM `tabSales Invoice` 
 		where outstanding_amount != 0 and docstatus = 1 and company = '{0}'""".format(company),
         as_dict=1,
     )
@@ -33,13 +33,29 @@ def get_data(filters):
 	for customer in customer_list:
 
 		invoices = frappe.db.sql(
-			"""SELECT name, customer,posting_date, currency, grand_total,
-				due_date,DATEDIFF(curdate(), due_date)due_days, outstanding_amount, 
-				(DATEDIFF(curdate(), due_date) * outstanding_amount)val_out
-				FROM `tabSales Invoice` where outstanding_amount != 0 and docstatus = 1
-				and customer = '{0}' and company = '{1}'""".format(customer.customer, filters.get("company")),
-			as_dict=1,
+			"""SELECT
+				name,
+				customer,
+				posting_date,
+				currency,
+				grand_total,
+				due_date,
+				DATEDIFF(curdate(), due_date) AS due_days,
+				outstanding_amount,
+				(DATEDIFF(curdate(), due_date) * outstanding_amount) AS val_out
+			FROM `tabSales Invoice`
+			WHERE
+				outstanding_amount != 0
+				AND docstatus = 1
+				AND customer_code = %(customer_code)s
+				AND company = %(company)s """,
+			{
+				'customer_code': customer.customer_code,
+				'company': filters.get("company")
+			},
+			as_dict=1
 		)
+
 		due_days_sum = 0
 		outstanding_sum = 0
 		last_customer = None
@@ -72,7 +88,7 @@ def get_data(filters):
 		cons_context['due_days'] = due_days_sum
 		cons_context['customer_balance'] = outstanding_sum
 		cons_context['value_outstanding'] = value_outstanding_sum
-		cons_context['avg_value_outstanding'] = value_outstanding_sum / due_days_sum
+		cons_context['avg_value_outstanding'] = value_outstanding_sum / due_days_sum if due_days_sum else 1
 		
 		data_inv.append(cons_context)
 
@@ -84,7 +100,8 @@ def get_columns(filters):
 		{
 			"label": _("Invoice No"),
 			"fieldname": "invoice_no",
-			"fieldtype": "Data",
+			"fieldtype": "Link",
+			"options": "Sales Invoice",
 			"width": 170,
 		},
 		{
