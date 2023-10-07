@@ -12,5 +12,20 @@ frappe.query_reports["Outstanding Invoices and Average Value"] = {
 			"default": frappe.defaults.get_user_default("Company"),
 			"reqd": 1
 		},
+		{
+			"fieldname":"till_date",
+			"label": __("Till Date"),
+			"fieldtype": "Date",
+			"default": frappe.datetime.get_today(),
+			"reqd": 1,
+			"width": "60px"
+		},
+		// {
+		// 	"fieldname":"outstanding_bound",
+		// 	"label": __("Outstanding Bound"),
+		// 	"fieldtype": "Currency",
+		// 	"default": 0,
+		// 	"width": "60px"
+		// },
 	]
 };

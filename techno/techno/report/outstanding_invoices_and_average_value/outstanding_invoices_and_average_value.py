@@ -11,16 +11,20 @@ def execute(filters=None):
 	if not filters.get("company"):
 		return
 
+	if not filters.get("till_date"):
+		return
+
 	data = get_data(filters)
 	columns = get_columns(filters)
 
 	return columns, data
 
-def get_all_customer(company):
+def get_all_customer(company, till_date):
 
 	customers = frappe.db.sql(
         """SELECT distinct customer_code FROM `tabSales Invoice` 
-		where outstanding_amount != 0 and docstatus = 1 and company = '{0}'""".format(company),
+		where outstanding_amount NOT BETWEEN -100 AND 100 
+		and docstatus = 1 and company = '{0}' and posting_date <= '{1}'""".format(company, till_date),
         as_dict=1,
     )
 
@@ -28,7 +32,7 @@ def get_all_customer(company):
 
 def get_data(filters):
 	data_inv = []
-	customer_list = get_all_customer(filters.get("company"))
+	customer_list = get_all_customer(filters.get("company"), filters.get("till_date"))
 	all_customer_outstanding_sum = 0
 	for customer in customer_list:
 
@@ -45,13 +49,15 @@ def get_data(filters):
 				(DATEDIFF(curdate(), due_date) * outstanding_amount) AS val_out
 			FROM `tabSales Invoice`
 			WHERE
-				outstanding_amount != 0
+				outstanding_amount NOT BETWEEN -100 AND 100
+				and posting_date <= %(posting_date)s
 				AND docstatus = 1
 				AND customer_code = %(customer_code)s
 				AND company = %(company)s """,
 			{
 				'customer_code': customer.customer_code,
-				'company': filters.get("company")
+				'company': filters.get("company"),
+				'posting_date': filters.get("till_date"),
 			},
 			as_dict=1
 		)
