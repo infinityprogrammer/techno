@@ -140,8 +140,6 @@ def get_data(filters):
 	difference['title'] = "<b>Net Cashflow</b>"
 	data.append(difference)
 
-	print(context_opening)
-	print(difference)
 
 	end_balalnce = {}
 	for month in month_sums.keys():
@@ -268,10 +266,13 @@ def get_dist_customer(filters):
 
 
 def get_all_opening(filters, month):
-	
+	import datetime
 	year = cint(filters.get("fiscal_year"))
 
-	jan_opening_balalnce = frappe.db.sql(
+	last_day = datetime.date(year, month, 1) + datetime.timedelta(days=32)
+	last_day = last_day.replace(day=1) - datetime.timedelta(days=1)
+
+	all_opening_balalnce = frappe.db.sql(
         """
 		SELECT ifnull(round((sum(debit) - sum(credit)), 2), 0)balance
 		FROM `tabGL Entry` gl, `tabAccount` acc 
@@ -279,11 +280,11 @@ def get_all_opening(filters, month):
 		and gl.company = %(company)s
 		and gl.is_cancelled = 0
 		and acc.account_type = 'Bank'
-		and month(posting_date) = %(month)s and year(posting_date) = %(year)s
-		""",{'month': month, 'year': year, 'company': filters.get("company")}, as_dict=1,
+		and gl.posting_date <= %(last_day)s
+		""",{'month': month, 'year': year, 'company': filters.get("company"), 'last_day':last_day}, as_dict=1,
     )
 
-	return jan_opening_balalnce[0].balance
+	return all_opening_balalnce[0].balance
 
 
 def get_jan_opening(filters):

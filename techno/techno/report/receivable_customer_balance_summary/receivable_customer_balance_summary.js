@@ -12,5 +12,27 @@ frappe.query_reports["Receivable Customer Balance Summary"] = {
 			"default": frappe.defaults.get_user_default("Company"),
 			"reqd": 1
 		},
+		{
+			"fieldname":"till_date",
+			"label": __("Till Date"),
+			"fieldtype": "Date",
+			"default": frappe.datetime.get_today(),
+			"reqd": 1
+		},
+		{
+			"fieldname":"from_value",
+			"label": __("From Value"),
+			"fieldtype": "Int",
+		},
+		{
+			"fieldname":"to_value",
+			"label": __("To Value"),
+			"fieldtype": "Int",
+		},
+		{
+			"fieldname":"group_customer",
+			"label": __("Group By Customer"),
+			"fieldtype": "Check",
+		},
 	]
 };
