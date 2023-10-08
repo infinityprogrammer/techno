@@ -85,11 +85,25 @@ def get_data(filters):
 
 	out_context = {}
 	out_items = get_cash_out_against(filters)
+
+	supp_map = {
+		'SUP-0012': 'HABARIPAY',
+		'SUP-0020' : 'TSYS Card Tech LTD',
+		'SUP-0024': 'ICC Solutions Limited',
+		'SUP-0026': 'KEDINASAL',
+	}
 	
 	out_list = []
 	for out_row in out_items:
 		out_it = {}
 		out_it['title'] = out_row.against
+
+		supp_name = supp_map.get(out_row.against)
+		if supp_name:
+			out_it['title'] = supp_name
+		else:
+			out_it['title'] = out_row.against
+
 		for index, month in enumerate(all_months_lowercase):
 			cashout = get_customer_cash_out(filters, index+1, out_row.against)
 			if cashout:
